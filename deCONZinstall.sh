@@ -2,9 +2,10 @@
 echo "deCONZ wrapper install script started."
 
 init() {
-    source ./settings.env
+    
     SCRIPT_NAME=$(basename ${BASH_SOURCE[0]})
     SCRIPT_PATH=$(pwd ${BASH_SOURCE[0]})
+    source "${SCRIPT_PATH}"/settings.env
     echo "Currently runnung as user: $(id -un):$(id -gn)"
     echo "Installer location is ${SCRIPT_PATH}/${SCRIPT_NAME}"
 }
@@ -235,6 +236,8 @@ change_systemd_config() {
 [Service]
 User=root
 Group=root
+RootDirectory=/
+WorkingDirectory=${DECONZ_WRAPPER_INSTALL_PATH}/
 ExecStart=
 ExecStart="${DECONZ_WRAPPER_INSTALL_PATH}/deCONZstart.sh"
 
@@ -292,8 +295,8 @@ EOF
 init
 check_root_privileges
 create_wrapper_data_folder
-setup_apt_repo
-install_deconz
+#setup_apt_repo
+#install_deconz
 fix_udev_device_assignments
 change_systemd_config
 echo "Attention! Reboot is required before starting deconz!"

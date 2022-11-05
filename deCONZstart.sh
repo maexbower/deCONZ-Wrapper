@@ -2,9 +2,11 @@
 echo "deCONZ wrapper start script started."
 
 init() {
-    source ./settings.env
-    SCRIPT_NAME=$0
+    SCRIPT_NAME=$(basename ${BASH_SOURCE[0]})
+    SCRIPT_PATH=$(pwd ${BASH_SOURCE[0]})
+    source "${SCRIPT_PATH}"/settings.env
     echo "Currently runnung as user: $(id -un):$(id -gn)"
+    echo "Script location is ${SCRIPT_PATH}/${SCRIPT_NAME}"
 }
 
 determine_real_interface() {
@@ -61,7 +63,7 @@ check_and_change_user() {
         SUDO_REQUIRED=1
         echo "User ID $(id -u) does not match ${DECONZ_USER}. Sudo required"
         echo "Try to run script as target user: ${DECONZ_USER}:${DECONZ_GROUP}"
-        gosu ${DECONZ_USER} ${SCRIPT_NAME}
+        gosu ${DECONZ_USER} "${SCRIPT_PATH}"/${SCRIPT_NAME}
         if [ $? != 0 ]; then
             echo "Starting with target user & group failed. Stoping now."
             exit 1
@@ -76,7 +78,7 @@ check_and_change_user() {
         SUDO_REQUIRED=1
         echo "Group ID $(id -g) does not match ${DECONZ_GROUP}. Sudo required"
         echo "Try to run script as target user: ${DECONZ_USER}:${DECONZ_GROUP}"
-        gosu ${DECONZ_USER} ${SCRIPT_NAME}
+        gosu ${DECONZ_USER} "${SCRIPT_PATH}"/${SCRIPT_NAME}
         if [ $? != 0 ]; then
             echo "Starting with target user & group failed. Stoping now."
             exit 1
